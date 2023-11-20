@@ -1,12 +1,11 @@
 ﻿using API.Data;
 using API.Entities;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
-[Authorize]
+//[Authorize]
 public class UsersController : BaiseApiController
 {
     private readonly DataContext _context;
