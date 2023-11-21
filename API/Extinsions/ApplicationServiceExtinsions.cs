@@ -1,4 +1,5 @@
 
+using API.Classes;
 using API.Data;
 using API.Interfaces;
 using API.Services;
@@ -19,6 +20,7 @@ namespace API.Extinsions
            services.AddCors();
            services.AddScoped<ITokenService, TokenService>();
 
+           services.AddScoped<IUserRepository, UserRepository>();
            return services;
        } 
     }
