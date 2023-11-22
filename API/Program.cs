@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using API.Data;
 using API.Entities;
 using API.Extinsions;
@@ -5,11 +6,15 @@ using API.Middleware;
 using Microsoft.EntityFrameworkCore;
 
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+});
 builder.Services.AddApplicationService(builder.Configuration);
 builder.Services.AddIdentityService(builder.Configuration);
 
