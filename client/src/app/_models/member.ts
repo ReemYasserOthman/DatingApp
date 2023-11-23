@@ -4,10 +4,10 @@ export interface Member {
     id: number
     userName: string
     photoUrl: string
-    knowAs: string
+    knownAs: string
     gender: string
-    lokingFor: string
-    introudction: string
+    lookingFor: string
+    introduction: string
     interests: string
     city: string
     country: string
