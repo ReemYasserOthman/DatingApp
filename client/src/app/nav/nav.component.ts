@@ -12,8 +12,8 @@ import { User } from '../_models/user';
 export class NavComponent implements OnInit{
 
   model :any= {}
-  user:any;
-  username: any;
+  user:User | null= null;
+  
   
   constructor(public accountService: AccountService,private router: Router, 
     private toastr: ToastrService) {     
@@ -26,19 +26,17 @@ export class NavComponent implements OnInit{
    login(){
     this.accountService.login(this.model).subscribe
     ({
-      next: _ => {
-        this.router.navigateByUrl('/members'),
+      next: _ =>  {
 
-        this.accountService.currentUser$.pipe().subscribe({
-          next: user=> {
-            this.user = user,
-            this.username = this.user.usernamee
-          }
-        });
+        this.accountService.currentUser$.subscribe({
+          next: user => this.user = user
+                     
+       })
+        console.log(this.user);
+        this.router.navigateByUrl('/members')      
+
       }
-           
     })
-    
    }
 
    logout(){

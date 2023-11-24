@@ -9,7 +9,6 @@ import { FormsModule } from '@angular/forms';
 import { HomeComponent } from './home/home.component';
 import { RegisterComponent } from './register/register.component';
 import { MemberListComponent } from './members/member-list/member-list.component';
-import { MemberDetailComponent } from './members/member-detail/member-detail.component';
 import { MessagesComponent } from './messages/messages.component';
 import { ListsComponent } from './lists/lists.component';
 import { SharedModule } from './_modules/shared/shared.module';
@@ -20,6 +19,8 @@ import { ErrorInterceptor } from './_interceptors/error.interceptor';
 import { MemberCardComponent } from './members/member-card/member-card.component';
 import { JwtInterceptor } from './_interceptors/jwt.interceptor';
 import { MemberEditComponent } from './members/member-edit/member-edit.component';
+import { LoadingInterceptor } from './_interceptors/loading.interceptor';
+
 
 
 @NgModule({
@@ -28,8 +29,7 @@ import { MemberEditComponent } from './members/member-edit/member-edit.component
     NavComponent,
     HomeComponent,
     RegisterComponent,
-    MemberListComponent,
-    
+    MemberListComponent,    
     MessagesComponent,
     ListsComponent,
     TestErrorsComponent,
@@ -37,6 +37,7 @@ import { MemberEditComponent } from './members/member-edit/member-edit.component
     ServerErrorComponent,
     MemberCardComponent,
     MemberEditComponent,
+   
     
   ],
 
@@ -50,7 +51,8 @@ import { MemberEditComponent } from './members/member-edit/member-edit.component
    ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
-    {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true}
+    {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true},
+    {provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true}
   ],
   bootstrap: [AppComponent]
 })
