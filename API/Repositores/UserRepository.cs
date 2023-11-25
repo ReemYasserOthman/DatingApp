@@ -6,7 +6,7 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 
-namespace API.Classes
+namespace API.Repositores
 {
     public class UserRepository : IUserRepository
     {
