@@ -19,11 +19,8 @@ public class AppUser
     public DateTime Created { get; set; } = DateTime.UtcNow;
     public DateTime LastActive { get; set; } = DateTime.UtcNow;
     public List<Photo> Photos { get; set; } = new List<Photo>();
-
-    // public int GetAge()
-    // {
-    //    return DateOfBirth.CalculateAge();
-    // }
-
+    public List<UserLike> LikedByUsers { get; set; }
+    public List<UserLike> LikedUsers { get; set; }
+    
 }
 
