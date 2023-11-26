@@ -1,7 +1,6 @@
 import { Observable } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
 import { Member } from 'src/app/_models/member';
-import { AccountService } from 'src/app/_services/account.service';
 import { MembersService } from 'src/app/_services/members.service';
 import { Pagination } from 'src/app/_models/Pagination ';
 import { UserParams } from 'src/app/_models/userParams';

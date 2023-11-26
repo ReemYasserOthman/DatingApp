@@ -92,6 +92,19 @@ export class MembersService {
     )
     }
 
+    addLike(username: string) {
+      return this.http.post(this.baseUrl + 'likes/' + username, {})
+    }
+  
+    getLikes(predicate: string, pageNumber: number, pageSize: number) {
+      let params = this.getPaginationHeaders(pageNumber, pageSize);
+  
+      params = params.append('predicate', predicate);
+  
+      return this.getPaginatedResult<Member[]>(this.baseUrl + 'likes', params);
+    }
+    
+
     setMainPhoto(photoId: number) {
       return this.http.put(this.baseUrl + 'users/set-main-photo/' + photoId, {});
     }
@@ -125,7 +138,7 @@ export class MembersService {
 
     return params;
   }
-
+  
   
   ////Anothr soiluation for pass token in request headers == jwt interceptor /////
    
