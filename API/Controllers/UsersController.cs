@@ -6,6 +6,7 @@ using API.DTOs;
 using API.Extinsions;
 using API.Entities;
 using API.Helpers;
+using CloudinaryDotNet.Actions;
 
 namespace API.Controllers;
 
@@ -24,7 +25,8 @@ public class UsersController : BaiseApiController
         _mapper = mapper;
         _photoService = photoService;
     }
-
+    
+   
     [HttpGet]
    public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers([FromQuery] UserParams userParams)
     {
@@ -41,7 +43,8 @@ public class UsersController : BaiseApiController
 
         return Ok(users);
     }
-
+    
+    
     [HttpGet("{username}")]
     public async Task<ActionResult<MemberDto>> GetUser(string username)
     {
