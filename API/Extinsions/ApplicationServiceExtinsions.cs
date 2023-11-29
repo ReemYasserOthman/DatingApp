@@ -5,6 +5,7 @@ using API.Helpers;
 using API.Interfaces;
 using API.Services;
 using Microsoft.EntityFrameworkCore;
+using API.SignalR;
 
 namespace API.Extinsions
 {
@@ -27,6 +28,8 @@ namespace API.Extinsions
            services.AddScoped<ILikesRepository, LikesRepository>();
            services.AddScoped<IMessageRepository, MessageRepository>();
            services.AddScoped<LogUserActivity>();
+           services.AddSignalR();
+           services.AddSingleton<PresenceTracker>();
            return services;
        } 
     }
