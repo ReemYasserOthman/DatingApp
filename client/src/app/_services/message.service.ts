@@ -21,6 +21,7 @@ export class MessageService {
   constructor(private http: HttpClient) {}
 
   createHubConnection(user: User, otherUsername: string) {
+    
     this.hubConnection = new HubConnectionBuilder()
       .withUrl(this.hubUrl + 'message?user=' + otherUsername, {
         accessTokenFactory: () => user.token,
@@ -41,21 +42,20 @@ export class MessageService {
     });
 
     this.hubConnection.on('UpdatedGroup', (group: Group) => {
-      if (group.connections.some(x => x.username === otherUsername)) {
+      if (group.connections.some((x) => x.username === otherUsername)) {
         this.messageThread$.pipe(take(1)).subscribe({
-          next: messages => {
-            messages.forEach(message => {
+          next: (messages) => {
+            messages.forEach((message) => {
               if (!message.dateRead) {
-                message.dateRead = new Date(Date.now())
+                message.dateRead = new Date(Date.now());
               }
-            })
+            });
             this.messageThreadSouce.next([...messages]);
-          }
-        })
+          },
+        });
       }
-    })
-
-   }
+    });
+  }
 
   stopHubConnection() {
     if (this.hubConnection) {
@@ -80,10 +80,10 @@ export class MessageService {
   }
 
   async sendMessage(username: string, content: string) {
-    return this.hubConnection?.invoke('SendMessage', { recipientUsername: username, content })
-      .catch(error => console.log(error));
+    return this.hubConnection
+      ?.invoke('SendMessage', { recipientUsername: username, content })
+      .catch((error) => console.log(error));
   }
-
 
   deleteMessage(id: number) {
     return this.http.delete(this.baseUrl + 'messages/' + id);

@@ -95,7 +95,7 @@ namespace API.Repositores
                  m.RecipientUsername == recipientUserName && m.SenderDeleted == false &&
                  m.SenderUsername == currentUserName
              )
-             .OrderByDescending(m => m.MessageSent)
+             .OrderBy(m => m.MessageSent)
              .ToListAsync();
 
             var unreadMessages = messages.Where(m => m.DateRead == null

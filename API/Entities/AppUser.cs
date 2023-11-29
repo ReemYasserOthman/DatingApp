@@ -13,8 +13,8 @@ public class AppUser : IdentityUser<int>
     public string City { get; set; }
     public string Country { get; set; }
     public DateOnly DateOfBirth { get; set; }
-    public DateTime Created { get; set; } = DateTime.UtcNow;
-    public DateTime LastActive { get; set; } = DateTime.UtcNow;
+    public DateTime Created { get; set; } = DateTime.Now;
+    public DateTime LastActive { get; set; } = DateTime.Now;
     public List<Photo> Photos { get; set; } = new List<Photo>();
     public List<UserLike> LikedByUsers { get; set; }
     public List<UserLike> LikedUsers { get; set; }
