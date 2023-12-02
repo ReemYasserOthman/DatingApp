@@ -28,13 +28,13 @@ export class NavComponent implements OnInit{
     ({
       next: _ =>  {
 
-        this.accountService.currentUser$.subscribe({
-          next: user => this.user = user
+      //   this.accountService.currentUser$.subscribe({
+      //     next: user => this.user = user
                      
-       })
-        console.log(this.user);
+      //  })
+      
         this.router.navigateByUrl('/members')      
-
+        this.model = {};
       }
     })
    }

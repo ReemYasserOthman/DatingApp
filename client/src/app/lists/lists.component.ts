@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Member } from '../_models/member';
 import { Pagination } from '../_models/Pagination ';
 import { MembersService } from '../_services/members.service';
+import { BaseService } from '../_services/baseService/base-service.service';
+import { HttpService } from '../_services/http/http.service';
+import { Api } from '../_helpers/apiPath';
 
 @Component({
   selector: 'app-lists',
@@ -16,11 +19,17 @@ export class ListsComponent implements OnInit{
   pageSize = 5;
   pagination: Pagination | undefined;
 
-constructor(private memberService: MembersService) {
   
+  //BaseService
+  baseService: BaseService<Member>;
+
+constructor(private memberService: MembersService,
+  httpService: HttpService) {
+  this.baseService = new BaseService<Member>(httpService, Api.users);
 }
   ngOnInit(): void {
    this.loadLikes();
+   this.baseService.GetAll();
   }
 
   loadLikes() {

@@ -6,7 +6,7 @@ namespace API.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 
-public class BaiseApiController :ControllerBase
+public class BaseApiController :ControllerBase
 {
     
 }

@@ -1,5 +1,6 @@
 using API.Data;
 using API.Entities;
+using API.Extensions;
 using API.Extinsions;
 using API.Middleware;
 using API.SignalR;
@@ -15,6 +16,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddApplicationService(builder.Configuration);
 builder.Services.AddIdentityService(builder.Configuration);
+builder.Services.AddSwaggerDocumentation();
+
 
 
 var app = builder.Build();
@@ -29,6 +32,7 @@ app.UseCors(builder => builder
 .AllowCredentials()
 .WithOrigins("https://localhost:4200"));
 
+app.UseSwaggerDocumention();
 
 app.UseAuthentication();
 app.UseAuthorization();

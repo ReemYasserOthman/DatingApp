@@ -1,5 +1,4 @@
-﻿using API.Extinsions;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 namespace API.Entities;
 
 
@@ -21,6 +20,7 @@ public class AppUser : IdentityUser<int>
     public List<Message> MessagesSend { get; set; }
     public List<Message> MessagesReceived { get; set; }
     public ICollection<AppUserRole> UserRoles { get; set; }
-    
+    public bool IsDeleted { get; set; } = false;
+
 }
 

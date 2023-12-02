@@ -18,6 +18,8 @@ namespace API.Data
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             var users = JsonSerializer.Deserialize<List<AppUser>>(userData, options);
 
+            // await ReadData<AppUser>("UserSeedData", context);
+
             var roles = new List<AppRole>
             {
                 new AppRole{Name = "Member"},
@@ -47,6 +49,22 @@ namespace API.Data
             await userManager.CreateAsync(admin, "Pa$$w0rd");
             await userManager.AddToRolesAsync(admin, new[] { "Admin", "Moderator" });
 
+
+        }
+
+        private static async Task ReadData<TEntity>(string fileName, DataContext context) where TEntity : BaseEntity
+        {
+            if (!context.Set<TEntity>().Any())
+            {
+                var file = await File.ReadAllTextAsync("API/Data/" + fileName + ".json");
+
+                var data = JsonSerializer.Deserialize<List<TEntity>>(file);
+
+                await context.Set<TEntity>().AddRangeAsync(data);
+
+                await context.SaveChangesAsync();
+
+            }
 
         }
     }

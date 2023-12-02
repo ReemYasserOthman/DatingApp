@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 namespace API.Controllers;
 
-public class AccountController :BaiseApiController
+public class AccountController :BaseApiController
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly ITokenService _tokenService;
