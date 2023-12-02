@@ -3,6 +3,7 @@ using API.Entities;
 using API.Extinsions;
 using API.Helpers;
 using API.Interfaces;
+using API.Repositores;
 using API.UnitOfWork;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -14,12 +15,12 @@ namespace API.Controllers
     public class MessagesController : BaseApiController
     {
         private readonly IUnitOfWork _uow;
-        private readonly IMapper _mapper;
-        public MessagesController(IUnitOfWork uow, IMapper mapper)
+         //  private readonly IMapper _mapper;
+        public MessagesController(IUnitOfWork uow)
         {
             _uow = uow;
-            _mapper = mapper;
-            
+           // _mapper = mapper;
+         
         }
 
         [HttpPost]
@@ -44,10 +45,11 @@ namespace API.Controllers
                 Content = createMessageDto.Content
             };
 
-            _uow.MessageRepository.AddMessage(message);
+              _uow.MessageRepository.AddMessage(message);
+             
 
             if (await _uow.SaveAsync())
-                return Ok(_mapper.Map<MessageDto>(message));
+                return Ok(_uow.Mapper.Map<MessageDto>(message));
 
             return BadRequest("Failed to send message");
         }
@@ -66,14 +68,7 @@ namespace API.Controllers
             return messages;
         }
 
-        // [HttpGet("thread/{username}")]
-        // public async Task<ActionResult<IEnumerable<MessageDto>>> GetMessageThread(string username)
-        // {
-        //     var currentUsername = User.GetUsername();
-
-        //     return Ok(await _uow.MessageRepository.GetMessageThread(currentUsername, username));
-        // }
-
+     
         
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteMessage(int id)
@@ -81,7 +76,7 @@ namespace API.Controllers
         var username = User.GetUsername();
 
         var message = await _uow.MessageRepository.GetMessage(id);
-
+        
         if (message.SenderUsername != username && message.RecipientUsername != username) 
             return Unauthorized();
 
@@ -92,7 +87,8 @@ namespace API.Controllers
         if (message.SenderDeleted && message.RecipientDeleted)
         {
             _uow.MessageRepository.DeleteMessage(message);
-        }
+                        
+        }  
 
         if (await _uow.SaveAsync()) return Ok();
 
