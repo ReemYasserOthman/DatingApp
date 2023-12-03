@@ -1,3 +1,4 @@
+import { HttpService } from './http/http.service';
 import { map, of, take } from 'rxjs';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -21,7 +22,8 @@ export class MembersService {
   user?: User | null;
   userParams: UserParams | undefined;
 
-  constructor(private http: HttpClient, private accountService: AccountService) { 
+  constructor(private http: HttpClient, private accountService: AccountService,
+    private httpService: HttpService) { 
    //Important
 
     this.accountService.currentUser$.pipe(take(1)).subscribe({
@@ -79,13 +81,13 @@ export class MembersService {
 
     if (member) return of(member);
 
-   return this.http.get<Member>(this.baseUrl + "users/" + username); 
+   return this.httpService.httpGet<Member>("users/" + username); 
   }
 
 
   updateMember(member: Member){
     
-    return this.http.put(this.baseUrl + "users" , member).pipe(
+    return this.httpService.httpPut("users" , member).pipe(
       map(()=> {
         const index = this.members.indexOf(member);
         this.members[index] = {...this.members[index], ...member}
@@ -94,7 +96,7 @@ export class MembersService {
     }
 
     addLike(username: string) {
-      return this.http.post(this.baseUrl + 'likes/' + username, {})
+      return this.httpService.httpPost('likes/' + username, {})
     }
   
     getLikes(predicate: string, pageNumber: number, pageSize: number) {
@@ -107,11 +109,11 @@ export class MembersService {
     
 
     setMainPhoto(photoId: number) {
-      return this.http.put(this.baseUrl + 'users/set-main-photo/' + photoId, {});
+      return this.httpService.httpPut('users/set-main-photo/' + photoId, {});
     }
   
     deletePhoto(photoId: number) {
-      return this.http.delete(this.baseUrl + 'users/delete-photo/' + photoId);
+      return this.httpService.httpDelete('users/delete-photo/' + photoId);
     }
 
 

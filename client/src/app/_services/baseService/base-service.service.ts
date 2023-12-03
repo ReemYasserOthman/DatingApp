@@ -1,6 +1,5 @@
 import { HttpService } from "../http/http.service";
 
-
 export class BaseService<T> {
   private api: string;
 
