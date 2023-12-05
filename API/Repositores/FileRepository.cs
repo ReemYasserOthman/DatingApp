@@ -12,42 +12,43 @@ namespace API.Repositores
             _hostEnvironment = hostEnvironment;
         }
 
-        //public async Task<string> CreateAsync(IFormFile file, string path)
-        //{
-        //    try
-        //    {
-        //        if (file == null) return null;
+        public async Task<string> CreateAsync(IFormFile file, string path)
+        {
+            try
+            {
+                if (file == null) return null;
 
-        //        var fileName = file.FileName;
+                var fileName = file.FileName;
 
-        //        var extention = "." + fileName.Split('.')[fileName.Split('.').Length - 1];
+                //var extention = "." + fileName.Split('.')[fileName.Split('.').Length - 1];
+                var extention = Path.GetExtension(fileName);
 
-        //        var newFileName = Guid.NewGuid() + extention;
+                var newFileName = Guid.NewGuid() + extention;
 
-        //        var pathDirectory = Path.Combine(_hostEnvironment.ContentRootPath, "wwwroot\\Upload", path);
+                //var pathDirectory = Path.Combine(_hostEnvironment.ContentRootPath, "wwwroot/Upload", path);
+                var pathDirectory = Path.Combine(_hostEnvironment.ContentRootPath, "wwwroot", "Upload", path);
+                if (!Directory.Exists(pathDirectory))
+                {
+                    Directory.CreateDirectory(pathDirectory);
+                }
 
-        //        if (!Directory.Exists(pathDirectory))
-        //        {
-        //            Directory.CreateDirectory(pathDirectory);
-        //        }
-
-        //        var pathFile = Path.Combine(pathDirectory, newFileName);
-
-
-        //        using (var stream = System.IO.File.Create(pathFile))
-        //        {
-        //            await file.CopyToAsync(stream);
-        //        }
+                var pathFile = Path.Combine(pathDirectory, newFileName);
 
 
-        //        return "Upload/" + path + "/" + newFileName;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return ex.ToString();
-        //    }
+                using (var stream = System.IO.File.Create(pathFile))
+                {
+                    await file.CopyToAsync(stream);
+                }
 
-        //}
+
+                return "Upload/" + path + "/" + newFileName;
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
+            }
+
+        }
 
         public async Task<string> CreateBase64Async(string base64String, string path)
         {
@@ -56,7 +57,7 @@ namespace API.Repositores
                 if (string.IsNullOrWhiteSpace(base64String)) return null;
 
                 var bytes = Convert.FromBase64String(base64String);
-                var pathDirectory = Path.Combine(_hostEnvironment.ContentRootPath, "wwwroot","Upload", path);
+                var pathDirectory = Path.Combine(_hostEnvironment.ContentRootPath, "wwwroot", "Upload", path);
 
                 MemoryStream stream = new MemoryStream(bytes);
 

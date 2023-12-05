@@ -1,9 +1,10 @@
-export interface Group {
-    name: string;
-    connections: Connection[];
+
+export class Group {
+    name = ''
+    connections:Connection[] = [] 
 }
 
-export interface Connection {
-    connectionId: string;
-    username: string;
+export class Connection {
+    connectionId= ''
+    username = ''
 }

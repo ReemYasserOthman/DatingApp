@@ -1,18 +1,18 @@
 import { Photo } from "./photo"
 
-export interface Member {
-    id: number
-    userName: string
-    photoUrl: string
-    knownAs: string
-    gender: string
-    lookingFor: string
-    introduction: string
-    interests: string
-    city: string
-    country: string
-    age: number
-    created: string
-    lastActive: string
-    photos: Photo[]
+export class Member {
+    id = 0 
+    userName =''
+    photoUrl =''
+    knownAs =''
+    gender =''
+    lookingFor =''
+    introduction =''
+    interests =''
+    city =''
+    country=''
+    age = 0
+    created =''
+    lastActive =''
+    photos: Photo[] = []
   }

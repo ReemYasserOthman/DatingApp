@@ -38,6 +38,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+//Hubs
 app.MapHub<PresenceHub>("hubs/presence");
 app.MapHub<MessageHub>("hubs/message");
 

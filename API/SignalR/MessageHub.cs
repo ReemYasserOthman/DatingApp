@@ -33,7 +33,8 @@ namespace API.SignalR
 
             await Clients.Group(groupName).SendAsync("UpdatedGroup", group);
 
-            var messages = await _uow.MessageRepository.GetMessageThread(Context.User.GetUsername(), otherUser);
+            var messages = await _uow.MessageRepository.GetMessageThread(Context.User.GetUsername()
+            ,otherUser);
 
             if(_uow.HasChanges()) await _uow.SaveAsync();
 
@@ -78,6 +79,7 @@ namespace API.SignalR
             }
             else
             {
+                //Send Notification
                 var connections = await PresenceTracker.GetConnectionsForUser(recipient.UserName);
                 if (connections != null)
                 {
@@ -96,14 +98,13 @@ namespace API.SignalR
 
         private string GetGroupName(string caller, string other)
         {
-            var stringCompare = string.CompareOrdinal(caller, other) < 0;
+            var stringCompare =  string.CompareOrdinal(caller, other) < 0;
             return stringCompare ? $"{caller}-{other}" : $"{other}-{caller}";
         }
 
         private async Task<Group> AddToGroup(string groupName)
         {
-            var group = await _uow.MessageRepository.GetMessageGroup(groupName);
-            var connection = new Connection(Context.ConnectionId, Context.User.GetUsername());
+            var group = await _uow.MessageRepository.GetMessageGroup(groupName);            
 
             if (group == null)
             {
@@ -111,6 +112,7 @@ namespace API.SignalR
                 _uow.MessageRepository.AddGroup(group);
             }
 
+            var connection = new Connection(Context.ConnectionId, Context.User.GetUsername());
             group.Connections.Add(connection);
 
             if (await _uow.SaveAsync()) return group;

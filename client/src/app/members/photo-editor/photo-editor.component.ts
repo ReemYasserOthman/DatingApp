@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FileUploader } from 'ng2-file-upload';
+import { FileItem, FileUploader } from 'ng2-file-upload';
 import { take } from 'rxjs';
 import { Member } from 'src/app/_models/member';
 import { Photo } from 'src/app/_models/photo';
@@ -35,22 +35,26 @@ ngOnInit(): void {
 
 initializeUploader() {
   this.uploader = new FileUploader({
-    url: this.baseUrl + 'users/add-photo',
+    url: this.baseUrl + 'photos/AddPhoto',
     authToken: 'Bearer ' + this.user?.token,
     isHTML5: true,
     allowedFileType: ['image'],
     removeAfterUpload: true,
     autoUpload: false,
-    maxFileSize: 10 * 1024 * 1024
-  });
+    maxFileSize: 10 * 1024 * 1024,
+    
+  }); 
 
   this.uploader.onAfterAddingFile = (file) => {
-    file.withCredentials = false;
+    file.withCredentials = false;   
+    console.log(file);
+   
   }
 
   this.uploader.onSuccessItem = (item, response, status, headers) => {
     if (response) {
       const photo = JSON.parse(response); 
+      console.log(photo);
            
       this.member?.photos.push(photo);
       if(photo.isMain && this.user && this.member){
@@ -90,6 +94,23 @@ deletePhoto(photoId: number) {
       }
     }
   })
+}
+
+ fileToBase64(file:any) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    if(!reader) return;
+    reader.onload = function() {
+      const base64String = reader.result?.toString().split(',')[1]; // Extract the base64 data from the result
+      resolve(base64String);
+    };
+
+    reader.onerror = function(error) {
+      reject(error);
+    };
+
+    reader.readAsDataURL(file);
+  });
 }
 }
 

@@ -20,14 +20,15 @@ namespace API.Repositores
             _mapper = mapper;
         }
 
-        public void AddGroup(Group group)
-        {
-            _context.Groups.Add(group);
-        }
+       
 
         public void AddMessage(Message message)
         {
             _context.Messages.Add(message);
+        }
+        public async Task<Message> GetMessage(int id)
+        {
+            return await _context.Messages.FindAsync(id);
         }
 
         public void DeleteMessage(Message message)
@@ -35,32 +36,20 @@ namespace API.Repositores
             _context.Messages.Remove(message);
         }
 
-        public async Task<Connection> GetConnection(string connectionId)
-        {
-            return await _context.Connections.FindAsync(connectionId);
-        }
-
-         public async Task<Group> GetMessageGroup(string groupName)
+        public async Task<Group> GetMessageGroup(string groupName)
         {
             return await _context.Groups
             .Include(g => g.Connections)
             .FirstOrDefaultAsync(g => g.Name == groupName);
         }
- 
+        
         public async Task<Group> GetGroupForConnection(string connectionId)
         {
             return await _context.Groups
             .Include(x => x.Connections)
             .Where(x => x.Connections.Any(c => c.ConnectionId == connectionId))
             .FirstOrDefaultAsync();
-        }
-
-
-        public async Task<Message> GetMessage(int id)
-        {
-            return await _context.Messages.FindAsync(id);
-        }
-
+        }        
        
         public async Task<PagedList<MessageDto>> GetMessagesForUser(MessageParams messageParams)
         {
@@ -90,9 +79,11 @@ namespace API.Repositores
             
              .Where(
                  m => m.RecipientUsername == currentUserName && m.RecipientDeleted == false &&
-                 m.SenderUsername == recipientUserName ||
-                 m.RecipientUsername == recipientUserName && m.SenderDeleted == false &&
-                 m.SenderUsername == currentUserName
+                 m.SenderUsername == recipientUserName  ||
+
+                 m.SenderUsername == currentUserName && m.SenderDeleted == false &&
+                 m.RecipientUsername == recipientUserName 
+                
              )
              .OrderBy(m => m.MessageSent)
              .AsQueryable();
@@ -118,6 +109,14 @@ namespace API.Repositores
            _context.Connections.Remove(connection);
         }
 
+        public async Task<Connection> GetConnection(string connectionId)
+        {
+            return await _context.Connections.FindAsync(connectionId);
+        }
 
+        public void AddGroup(Group group)
+        {
+            _context.Groups.Add(group);
+        }
     }
 }

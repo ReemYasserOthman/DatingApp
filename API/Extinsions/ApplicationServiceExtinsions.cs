@@ -7,6 +7,7 @@ using API.Services;
 using Microsoft.EntityFrameworkCore;
 using API.SignalR;
 using API.UnitOfWork;
+using API.SignalR.HubServices;
 
 namespace API.Extinsions
 {
@@ -27,7 +28,7 @@ namespace API.Extinsions
            services.AddScoped<IPhotoService, PhotoService>();
            services.AddScoped<LogUserActivity>();
            services.AddSignalR();
-           services.AddSingleton<PresenceTracker>();
+           services.AddSingleton<PresenceTracker>();           
            services.AddScoped<IUnitOfWork,UnitOfWork.UnitOfWork>();
            return services;
        } 

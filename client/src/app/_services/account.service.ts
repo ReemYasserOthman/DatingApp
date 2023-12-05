@@ -12,10 +12,7 @@ export class AccountService {
   private currentUserSource = new BehaviorSubject<User | null>(null);
   currentUser$ = this.currentUserSource.asObservable();
 
-  constructor(
-    private presenceService: PresenceService,
-    private httpService: HttpService
-  ) {}
+  constructor( private presenceService: PresenceService,private httpService: HttpService) {}
 
   login(model: User) {
     return this.httpService.httpPost<User>('account/login', model).pipe(

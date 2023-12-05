@@ -1,5 +1,6 @@
 using API.Entities;
 using API.Interfaces;
+using API.SignalR.HubServices;
 using AutoMapper;
 
 
@@ -17,7 +18,7 @@ namespace API.UnitOfWork
         IUserRepository UserRepository { get; }
         ILikesRepository LikesRepository { get; }
         IMessageRepository MessageRepository { get; } 
-
+        IHubService HubService { get; }        
 
     }
 }

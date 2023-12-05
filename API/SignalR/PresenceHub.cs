@@ -18,6 +18,7 @@ namespace API.SignalR
 
             var currentUsers = await _tracker.GetOnlineUsers();
             await Clients.Caller.SendAsync("GetOnlineUsers", currentUsers);
+           
         }
 
         public override async Task OnDisconnectedAsync(Exception ex)

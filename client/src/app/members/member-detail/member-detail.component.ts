@@ -9,7 +9,6 @@ import { GalleryItem, GalleryModule, ImageItem } from 'ng-gallery';
 import { TabDirective, TabsModule, TabsetComponent } from 'ngx-bootstrap/tabs';
 import { TimeagoModule } from 'ngx-timeago';
 import { Member } from 'src/app/_models/member';
-import { MembersService } from 'src/app/_services/members.service';
 import { MemberMessagesComponent } from '../member-messages/member-messages.component';
 import { User } from 'src/app/_models/user';
 import { take } from 'rxjs';

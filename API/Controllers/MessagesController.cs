@@ -2,12 +2,12 @@ using API.DTOs;
 using API.Entities;
 using API.Extinsions;
 using API.Helpers;
-using API.Interfaces;
-using API.Repositores;
+using API.SignalR;
+using API.SignalR.HubServices;
 using API.UnitOfWork;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace API.Controllers
 {
@@ -15,13 +15,15 @@ namespace API.Controllers
     public class MessagesController : BaseApiController
     {
         private readonly IUnitOfWork _uow;
-         //  private readonly IMapper _mapper;
-        public MessagesController(IUnitOfWork uow)
+        private readonly IHubContext<PresenceHub> _presenceHub;
+      
+
+        public MessagesController(IUnitOfWork uow,IHubContext<PresenceHub> presenceHub)
         {
-            _uow = uow;
-           // _mapper = mapper;
-         
+            _presenceHub = presenceHub;
+             _uow = uow;
         }
+
 
         [HttpPost]
         public async Task<ActionResult<MessageDto>> CreateMessage(CreateMessageDto createMessageDto)
@@ -45,13 +47,32 @@ namespace API.Controllers
                 Content = createMessageDto.Content
             };
 
-              _uow.MessageRepository.AddMessage(message);
-             
+            var groupName = _uow.HubService.GetGroupName(sender.UserName, recipient.UserName);
 
-            if (await _uow.SaveAsync())
-                return Ok(_uow.Mapper.Map<MessageDto>(message));
+            var group = await _uow.MessageRepository.GetMessageGroup(groupName);
 
-            return BadRequest("Failed to send message");
+            if (group.Connections.Any(x => x.Username == recipient.UserName))
+            {
+                message.DateRead = DateTime.Now;
+            }
+            else
+            {
+                var connections = await PresenceTracker.GetConnectionsForUser(recipient.UserName);
+                if (connections != null)
+                {
+                    await _presenceHub.Clients.Clients(connections).SendAsync("NewMessageReceived",
+                        new { username = sender.UserName, knownAs = sender.KnownAs });
+                }
+            }
+
+            _uow.MessageRepository.AddMessage(message);
+
+            if (!await _uow.SaveAsync()) return BadRequest("Failed to send message");
+
+            await _uow.HubService.SendMessage(groupName,message);
+
+            return Ok(_uow.Mapper.Map<MessageDto>(message));
+         
         }
 
         [HttpGet]
@@ -65,35 +86,44 @@ namespace API.Controllers
             Response.AddPaginationHeader(new PaginationHeader(messages.CurrentPage,
                 messages.PageSize, messages.TotalCount, messages.TotalPages));
 
+
             return messages;
         }
 
-     
-        
-    [HttpDelete("{id}")]
-    public async Task<ActionResult> DeleteMessage(int id)
-    {
-        var username = User.GetUsername();
 
-        var message = await _uow.MessageRepository.GetMessage(id);
-        
-        if (message.SenderUsername != username && message.RecipientUsername != username) 
-            return Unauthorized();
 
-        if (message.SenderUsername == username) message.SenderDeleted = true;
-
-        if (message.RecipientUsername == username) message.RecipientDeleted = true;
-
-        if (message.SenderDeleted && message.RecipientDeleted)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteMessage(int id)
         {
-            _uow.MessageRepository.DeleteMessage(message);
-                        
-        }  
+            var username = User.GetUsername();
 
-        if (await _uow.SaveAsync()) return Ok();
+            var message = await _uow.MessageRepository.GetMessage(id);
 
-        return BadRequest("Problem deleting the message");
+            if (message.SenderUsername != username && message.RecipientUsername != username)
+                return Unauthorized();
+
+            if (message.SenderUsername == username) message.SenderDeleted = true;
+
+            if (message.RecipientUsername == username) message.RecipientDeleted = true;
+
+            if (message.SenderDeleted && message.RecipientDeleted)
+            {
+                _uow.MessageRepository.DeleteMessage(message);
+
+            }
+
+            if (await _uow.SaveAsync()) return Ok();
+
+            return BadRequest("Problem deleting the message");
+        }
+
     }
 
-    }
+    //  [HttpGet("thread/{username}")]
+    // public async Task<ActionResult<IEnumerable<MessageDto>>> GetMessageThread(string username)
+    // {
+    //     var currentUsername = User.GetUsername();
+
+    //     return Ok(await _uow.MessageRepository.GetMessageThread(currentUsername, username));
+    // }
 }

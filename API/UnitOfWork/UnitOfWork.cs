@@ -3,7 +3,10 @@ using API.Data;
 using API.Entities;
 using API.Interfaces;
 using API.Repositores;
+using API.SignalR;
+using API.SignalR.HubServices;
 using AutoMapper;
+using Microsoft.AspNetCore.SignalR;
 
 
 
@@ -12,13 +15,16 @@ namespace API.UnitOfWork
     public class UnitOfWork : IUnitOfWork
     {
         private readonly IHostEnvironment _hostEnvironment;
-
+        private readonly IHubContext<MessageHub> _messageHub;
         private Hashtable _repositories;
         private readonly DataContext _context;
         private readonly IMapper _mapper;
-        public UnitOfWork(DataContext context, IMapper mapper, IHostEnvironment hostEnvironment)
+        
+        public UnitOfWork(DataContext context, IMapper mapper, IHostEnvironment hostEnvironment,
+        IHubContext<MessageHub> messageHub)
         {
             _hostEnvironment = hostEnvironment;
+            _messageHub = messageHub;            
             _mapper = mapper;
             _context = context;
         }
@@ -34,6 +40,8 @@ namespace API.UnitOfWork
         public ILikesRepository LikesRepository => new LikesRepository(_context);
 
         public IMessageRepository MessageRepository => new MessageRepository(_context, _mapper);
+
+        public IHubService HubService => new HubService(_messageHub, _mapper);
 
         public async Task<bool> SaveAsync()
         {
