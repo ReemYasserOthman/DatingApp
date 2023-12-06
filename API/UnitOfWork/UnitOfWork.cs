@@ -33,7 +33,7 @@ namespace API.UnitOfWork
 
         public IFileRepository FileRepository => new FileRepository(_hostEnvironment);
 
-        IFileRepository IUnitOfWork.FileRepository => throw new NotImplementedException();
+        //IFileRepository IUnitOfWork.FileRepository => throw new NotImplementedException();
 
         public IUserRepository UserRepository => new UserRepository(_context, _mapper);
 

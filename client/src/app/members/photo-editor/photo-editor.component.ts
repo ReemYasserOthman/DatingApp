@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { HttpClient } from '@microsoft/signalr';
 import { FileItem, FileUploader } from 'ng2-file-upload';
 import { take } from 'rxjs';
 import { Member } from 'src/app/_models/member';
@@ -21,21 +22,26 @@ export class PhotoEditorComponent implements OnInit {
  baseUrl = environment.apiUrl;
  user: User | undefined;
 
+
  constructor(private accountService: AccountService, private memberService: MembersService) {
+
   this.accountService.currentUser$.pipe(take(1)).subscribe({
     next: user => {
       if (user) this.user = user
     }
   })
+
 }
 
 ngOnInit(): void {
   this.initializeUploader();
+  
 }
 
+//File
 initializeUploader() {
   this.uploader = new FileUploader({
-    url: this.baseUrl + 'photos/AddPhoto',
+    url: this.baseUrl + 'photos/AddPhotoFile',
     authToken: 'Bearer ' + this.user?.token,
     isHTML5: true,
     allowedFileType: ['image'],
@@ -44,6 +50,7 @@ initializeUploader() {
     maxFileSize: 10 * 1024 * 1024,
     
   }); 
+
 
   this.uploader.onAfterAddingFile = (file) => {
     file.withCredentials = false;   
@@ -65,6 +72,55 @@ initializeUploader() {
     }
   }
 }
+
+initializeUploader2() {
+  this.uploader = new FileUploader({
+    url: this.baseUrl + 'photos/AddPhoto/',
+    authToken: 'Bearer ' + this.user?.token,
+    isHTML5: true,
+    allowedFileType: ['image'],
+    removeAfterUpload: true,
+    autoUpload: false, 
+    maxFileSize: 10 * 1024 * 1024
+  });
+
+  this.uploader.onBeforeUploadItem = (item: FileItem) => {
+    
+    this.convertFileToBase64(item._file, (base64String) => {
+      
+      //item.url = this.baseUrl + 'photos/AddPhoto/' + encodeURIComponent(base64String);
+      const urlWithQueryParam = `${this.baseUrl}photos/AddPhoto?base64String=${encodeURIComponent(base64String)}`;
+      item.url = urlWithQueryParam;
+     
+    });
+  };
+
+  
+  this.uploader.onSuccessItem = (item, response, status, headers) => {
+    if (response) {
+      const photo = JSON.parse(response);
+      console.log(photo);
+
+      this.member?.photos.push(photo);
+      if (photo.isMain && this.user && this.member) {
+        this.user.photoUrl = photo.url;
+        this.member.photoUrl = photo.url;
+        this.accountService.setCurrentUser(this.user);
+      }
+    }
+  };
+   
+}
+
+convertFileToBase64(file: File, callback: (base64String: string) => void): void {
+  const reader = new FileReader();
+  reader.onloadend = () => {
+    const base64String = reader.result as string;
+    callback(base64String);
+  };
+  reader.readAsDataURL(file);
+}
+
 
 fileOverBase(e: any) {
   this.hasBaseDropzoneOver = e;
@@ -96,23 +152,9 @@ deletePhoto(photoId: number) {
   })
 }
 
- fileToBase64(file:any) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    if(!reader) return;
-    reader.onload = function() {
-      const base64String = reader.result?.toString().split(',')[1]; // Extract the base64 data from the result
-      resolve(base64String);
-    };
-
-    reader.onerror = function(error) {
-      reject(error);
-    };
-
-    reader.readAsDataURL(file);
-  });
 }
-}
+
+
 
   
 
