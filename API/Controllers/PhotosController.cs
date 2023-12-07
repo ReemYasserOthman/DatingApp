@@ -51,13 +51,12 @@ namespace API.Controllers
     
        
         [HttpPost("AddPhoto")]
-        public async Task<ActionResult<PhotoDto>> AddPhoto(string base64String)
+        public async Task<ActionResult<PhotoDto>> AddPhoto(BaseString baseString)
         {
             var user = await _uow.UserRepository.GetUserByUsernameAsync(User.GetUsername());
 
-            var url = await _fileRepository.CreateBase64Async(base64String, "users");
-            //var fullPath = "http://localhost:5001/api/wwwrot/" + url;
-            
+            var url = await _fileRepository.CreateBase64Async(baseString.BaseToString, "users");
+                       
             if (url == null) return BadRequest("No Photo Url");
 
             var photo = new Photo
@@ -75,8 +74,6 @@ namespace API.Controllers
             
             return BadRequest("Problem adding photo");
         }
-        
-    
     }
 }
 

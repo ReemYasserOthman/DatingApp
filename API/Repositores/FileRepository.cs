@@ -56,7 +56,11 @@ namespace API.Repositores
             {
                 if (string.IsNullOrWhiteSpace(base64String)) return null;
 
-                var bytes = Convert.FromBase64String(base64String);
+                var imageParts = base64String.Split(',').ToList<string>();               
+                
+                //Exclude the header from base64 by taking second element in List.                
+                var bytes = Convert.FromBase64String(imageParts[1]);
+
                 var pathDirectory = Path.Combine(_hostEnvironment.ContentRootPath, "wwwroot", "Upload", path);
 
                 MemoryStream stream = new MemoryStream(bytes);

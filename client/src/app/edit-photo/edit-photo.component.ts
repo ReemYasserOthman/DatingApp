@@ -1,34 +1,22 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { HttpClient,  HttpRequest, HttpResponse } from '@microsoft/signalr';
-import { Member } from '../_models/member';
+import { Component } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { User } from '../_models/user';
-import { AccountService } from '../_services/account.service';
-import { take } from 'rxjs';
-import { MembersService } from '../_services/members.service';
-
+import { HttpClient} from '@angular/common/http';
 @Component({
   selector: 'app-edit-photo',
   templateUrl: './edit-photo.component.html',
   styleUrls: ['./edit-photo.component.css'],
 })
 export class EditPhotoComponent {
- @Input() member: Member | undefined;
+
  baseUrl = environment.apiUrl;
  user: User | undefined; 
  selectedFile: any;
   
-  message: string | undefined;
-  @Output() public onUploadFinished = new EventEmitter();
  
-
-  constructor(private accountService: AccountService, private memberService: MembersService,
-    private http: HttpClient) {
-    this.accountService.currentUser$.pipe(take(1)).subscribe({
-      next: user => {
-        if (user) this.user = user
-      }
-    })
+  constructor( private http:HttpClient) {
+  
+    
   }
 
 
@@ -37,14 +25,14 @@ export class EditPhotoComponent {
     const reader = new FileReader();
     reader.readAsDataURL(this.selectedFile);
     reader.onload = () => {
-       this.selectedFile = reader.result;
-        console.log(reader.result);
+       this.selectedFile = reader.result;      
+        console.log(this.selectedFile);
     };
     }
     
     
   uploadFile(): void {
-    this.http.post(this.baseUrl + "photos/AddPhoto", this.selectedFile).then(
+    this.http.post(this.baseUrl + "photos/AddPhoto",{BaseToString : this.selectedFile}).subscribe(
       (response:any) => {
         console.log('Upload successful', response);
       },
@@ -54,18 +42,5 @@ export class EditPhotoComponent {
     );
   }
  
-  // onFileSelected(event: any): void {
-  //   const file: File = event.target.files[0];
-
-  //   if (file) {
-  //     const formData = new FormData();
-  //     formData.append('file', file, file.name);
-
-  //     //this.uploadFile(formData);
-  //   }
-  // }
-
- 
-
  
 }
